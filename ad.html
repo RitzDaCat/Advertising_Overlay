@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Sponsor Advertisement Overlay</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        #overlay-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .sponsor {
+            padding: 15px;
+            display: none;
+        }
+        .sponsor-image-container {
+            flex: 0 0 100px;
+            margin-right: 15px;
+        }
+        .sponsor-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .sponsor-command {
+            color: #00ccff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 5px;
+            background-color: rgba(0, 204, 255, 0.1);
+            border-radius: 4px;
+            padding: 2px 0;
+        }
+        .sponsor-content {
+            flex: 1;
+        }
+        .sponsor-name {
+            color: #ffcc00;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .sponsor-description {
+            color: #ffffff;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .progress-bar {
+            height: 3px;
+            background: linear-gradient(to right, silver, red);
+            width: 0;
+            transition: width 10s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay-container">
+        <div class="progress-bar"></div>
+        <div class="sponsor">
+            <div class="sponsor-image-container">
+                <img src="images\GlytchEnergy_Gaming-Bundle_Front-400x400.png"" alt="Glytch Energy" class="sponsor-image">
+                <div class="sponsor-command">!Glytch</div>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-name">Glytch Energy</div>
+                <div class="sponsor-description">Power up your gaming sessions with Glytch Energy drinks! Boost your focus and endurance.</div>
+            </div>
+        </div>
+        <div class="sponsor">
+            <div class="sponsor-image-container">
+                <img src="images\HyperX.jpg" alt="HyperX" class="sponsor-image">
+                <div class="sponsor-command">!HyperX</div>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-name">HyperX</div>
+                <div class="sponsor-description">Experience premium gaming gear with HyperX. From headsets to keyboards, elevate your play.</div>
+            </div>
+        </div>
+        <div class="sponsor">
+            <div class="sponsor-image-container">
+                <img src="images\Fabled_Clan.png" alt="Fabled Clan" class="sponsor-image">
+                <div class="sponsor-command">!Fabled</div>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-name">Fabled Clan</div>
+                <div class="sponsor-description">Join the legendary Fabled Clan gaming organization. Be part of the myth, create your legacy!</div>
+            </div>
+        </div>
+        <div class="sponsor">
+            <div class="sponsor-image-container">
+                <img src="images\GamerSleeve.jpg" alt="Gamer Sleeve" class="sponsor-image">
+                <div class="sponsor-command">!GamerSleeve</div>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-name">Gamer Sleeve</div>
+                <div class="sponsor-description">Need your arm to glide? Checkout Gamersleeve!</div>
+            </div>
+        </div>
+        <div class="sponsor">
+            <div class="sponsor-image-container">
+                <img src="images\Malaka.jpg" alt="Malaka Coffee" class="sponsor-image">
+                <div class="sponsor-command">!Malaka</div>
+            </div>
+            <div class="sponsor-content">
+                <div class="sponsor-name">Malaka Coffee</div>
+                <div class="sponsor-description">Support us with a cup of Joe from our big buddy Nick.</div>
+            </div>
+        </div>			
+    </div>
+
+<script>
+    const overlay = document.getElementById('overlay-container');
+    const sponsors = document.querySelectorAll('.sponsor');
+    const progressBar = document.querySelector('.progress-bar');
+    let currentSponsor = 0;
+    let isVisible = true;
+    const adDuration = 10000; // 10 seconds per ad
+    const totalSponsors = sponsors.length;
+    let shownSponsorsCount = 0;
+
+    function resetAndStartProgressBar() {
+        progressBar.style.transition = 'none';
+        progressBar.style.width = '0';
+        void progressBar.offsetWidth; // Trigger reflow
+        progressBar.style.transition = `width ${adDuration}ms linear`;
+        requestAnimationFrame(() => {
+            progressBar.style.width = '100%';
+        });
+    }
+
+    function showNextSponsor() {
+        sponsors[currentSponsor].style.display = 'none';
+        shownSponsorsCount++;
+        
+        if (shownSponsorsCount >= totalSponsors) {
+            hideOverlay();
+            return;
+        }
+
+        currentSponsor = (currentSponsor + 1) % totalSponsors;
+        sponsors[currentSponsor].style.display = 'flex';
+        resetAndStartProgressBar();
+    }
+
+    function hideOverlay() {
+        overlay.style.opacity = '0';
+        overlay.style.transform = 'translateY(20px)';
+        isVisible = false;
+        setTimeout(showOverlay, 180000); // 3 minutes
+    }
+
+    function showOverlay() {
+        overlay.style.opacity = '1';
+        overlay.style.transform = 'translateY(0)';
+        isVisible = true;
+        currentSponsor = 0;
+        shownSponsorsCount = 0;
+        sponsors.forEach((sponsor, index) => {
+            sponsor.style.display = index === 0 ? 'flex' : 'none';
+        });
+        resetAndStartProgressBar();
+        rotateAds();
+    }
+
+    function rotateAds() {
+        if (isVisible) {
+            setTimeout(() => {
+                showNextSponsor();
+                if (isVisible) {
+                    rotateAds();
+                }
+            }, adDuration);
+        }
+    }
+
+    // Start the ad cycle
+    showOverlay();
+</script>
+</body>
+</html>
